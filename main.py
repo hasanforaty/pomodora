@@ -10,11 +10,22 @@ WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 CHECK_MARK = "✔"
-# ---------------------------- TIMER RESET ------------------------------- # 
+
+# ---------------------------- TIMER RESET ------------------------------- #
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
+timer_is_running = False
 
-# ---------------------------- COUNTDOWN MECHANISM ------------------------------- # 
+
+# ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
+def count_down(count):
+    if timer_is_running:
+        minutes = count // 60
+        seconds = count % 60
+        canvas.itemconfig(count_down_text, text=f"{minutes:02d}:{seconds:02d}")
+        if count > 0:
+            windows.after(1000, count_down, count - 1)
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -30,17 +41,20 @@ timer.grid(row=0, column=1)
 canvas = tk.Canvas(windows, width=200, height=224, bg=YELLOW, highlightthickness=0)
 tomato_img = tk.PhotoImage(file="tomato.png")
 canvas.create_image(100, 112, image=tomato_img)
-canvas.create_text(100, 130, text="00:00", fill='white', font=(FONT_NAME, 35, 'bold'))
+count_down_text = canvas.create_text(100, 130, text="00:00", fill='white', font=(FONT_NAME, 35, 'bold'))
 canvas.grid(row=1, column=1)
 
 
 # start and reset Button
 def start_timer():
-    pass
+    global timer_is_running
+    timer_is_running = True
+    count_down(WORK_MIN * 60)
 
 
 def stop_timer():
-    pass
+    global timer_is_running
+    timer_is_running = False
 
 
 start_button = tk.Button(text="Start", command=start_timer, font=(FONT_NAME, 10, 'bold'), highlightthickness=0)
