@@ -79,6 +79,7 @@ def reset_timer():
     timer_is_running = False
     timer_label['text'] = ''
     canvas.itemconfig(count_down_text, text='00:00')
+    timer_label.config(text='Timer')
     reps = 0
     start_button.config(text='start', command=start_timer)
 
