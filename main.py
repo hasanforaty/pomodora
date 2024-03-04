@@ -28,6 +28,12 @@ def count_down(count):
             windows.after(1000, count_down, count - 1)
         else:
             start_timer()
+            checkmark = ''
+            number = reps // 2
+            while number > 0:
+                checkmark += CHECK_MARK
+                number -= 1
+            checkmark_text.config(text=checkmark)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -54,6 +60,7 @@ def start_timer():
     global reps
     timer_is_running = True
     reps += 1
+    start_button.config(text='stop', command=stop_timer)
     if reps % 8 == 0:
         time = LONG_BREAK_MIN
         timer_label.config(text='Long break', fg=RED)
@@ -66,18 +73,42 @@ def start_timer():
     count_down(time * 60)
 
 
+def reset_timer():
+    global timer_is_running
+    global reps
+    timer_is_running = False
+    timer_label['text'] = ''
+    canvas.itemconfig(count_down_text, text='00:00')
+    reps = 0
+    start_button.config(text='start', command=start_timer)
+
+
 def stop_timer():
+    start_button.config(text='resume', command=resume_timer)
     global timer_is_running
     timer_is_running = False
 
 
+def resume_timer():
+    global reps
+    global timer_is_running
+    timer_is_running = True
+    start_button.config(text='start', command=stop_timer)
+    text = canvas.itemcget(count_down_text, 'text').split(":")
+    print(text)
+    minute = int(text[0])
+    second = int(text[1])
+    count = minute*60 + second
+    count_down(count)
+
+
 start_button = tk.Button(text="Start", command=start_timer, font=(FONT_NAME, 10, 'bold'), highlightthickness=1)
 start_button.grid(row=2, column=0)
-stop_button = tk.Button(text="Stop", command=stop_timer, font=(FONT_NAME, 10, 'bold'), highlightthickness=1)
-stop_button.grid(row=2, column=2)
+reset_button = tk.Button(text="reset", command=reset_timer, font=(FONT_NAME, 10, 'bold'), highlightthickness=1)
+reset_button.grid(row=2, column=2)
 
 # add checkmark
-checkmark_text = tk.Label(text=CHECK_MARK, font=(FONT_NAME, 30, 'bold'), fg=GREEN, bg=YELLOW)
+checkmark_text = tk.Label(text="", font=(FONT_NAME, 30, 'bold'), fg=GREEN, bg=YELLOW)
 checkmark_text.grid(row=3, column=1)
 
 windows.mainloop()
