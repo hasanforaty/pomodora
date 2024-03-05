@@ -93,10 +93,10 @@ def stop_timer():
 def resume_timer():
     global reps
     global timer_is_running
+    reps = 0
     timer_is_running = True
     start_button.config(text='start', command=stop_timer)
     text = canvas.itemcget(count_down_text, 'text').split(":")
-    print(text)
     minute = int(text[0])
     second = int(text[1])
     count = minute*60 + second
