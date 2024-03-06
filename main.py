@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from pygame import mixer
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
 RED = "#e7305b"
@@ -11,6 +11,8 @@ SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 CHECK_MARK = "✔"
 reps = 0
+mixer.init()
+
 
 # ---------------------------- TIMER RESET ------------------------------- #
 
@@ -62,14 +64,19 @@ def start_timer():
     reps += 1
     start_button.config(text='stop', command=stop_timer)
     if reps % 8 == 0:
+        mixer.music.load('Hope_study.mp3')
         time = LONG_BREAK_MIN
         timer_label.config(text='Long break', fg=RED)
     elif reps % 2 == 0:
+        mixer.music.load('Tic_Tac.mp3')
         time = SHORT_BREAK_MIN
         timer_label.config(text='Short break', fg=PINK)
     else:
+        mixer.music.load('river-stream.mp3')
         time = WORK_MIN
         timer_label.config(text='Work time', fg=GREEN)
+    mixer.music.set_volume(0.1)
+    mixer.music.play(loops=-1)
     count_down(time * 60)
 
 
@@ -81,6 +88,8 @@ def reset_timer():
     canvas.itemconfig(count_down_text, text='00:00')
     timer_label.config(text='Timer')
     reps = 0
+    mixer.music.stop()
+    mixer.music.unload()
     start_button.config(text='start', command=start_timer)
 
 
@@ -88,11 +97,13 @@ def stop_timer():
     start_button.config(text='resume', command=resume_timer)
     global timer_is_running
     timer_is_running = False
+    mixer.music.pause()
 
 
 def resume_timer():
     global reps
     global timer_is_running
+    mixer.music.unpause()
     reps = 0
     timer_is_running = True
     start_button.config(text='start', command=stop_timer)
